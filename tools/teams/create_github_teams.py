@@ -38,7 +38,9 @@ class TeamManager:
         for team, team_info in teams.items():
             click.echo(f"Working on team {team}")
             parent_team = self.org.get_team_by_slug(team_info["parent_team"]).id
-            github_team = self.create_team(team, team_info["description"], parent_team=parent_team)
+            github_team = self.create_team(
+                team, team_info["description"], parent_team=parent_team
+            )
             self.add_admin_members(github_team)
 
             if all_repos_sync:
@@ -59,7 +61,9 @@ class TeamManager:
             team_name = f"{TEAM_PREFIX}-{repo}"
             github_team = self.get_team(team_name)
             if github_team is None:
-                github_team = self.create_team(team_name, parent_team=self.parent_team_id)
+                github_team = self.create_team(
+                    team_name, parent_team=self.parent_team_id
+                )
                 self.add_repository(github_team, repo, "push")
                 self.add_admin_members(github_team)
 
@@ -79,7 +83,9 @@ class TeamManager:
             click.echo(f"Adding {member} as {role} to team {team.name}")
             team.add_membership(self.g.get_user(member), role)
 
-    def create_team(self, team_name: str, description: str = "", parent_team=None) -> Team:
+    def create_team(
+        self, team_name: str, description: str = "", parent_team=None
+    ) -> Team:
         """
         Creates GitHub team
         """
@@ -87,12 +93,16 @@ class TeamManager:
         if github_team is None:
             click.echo(f"Crating team {team_name}")
             github_team = self.org.create_team(
-                team_name,
-                privacy="closed",
-                description=description)
+                team_name, privacy="closed", description=description
+            )
         if parent_team is not None:
             # No support for adding parent team in PyGithub
-            subprocess.Popen([f"gh api -X PATCH orgs/splunk/teams/{team_name} -F parent_team_id={parent_team}"], shell=True)
+            subprocess.Popen(
+                [
+                    f"gh api -X PATCH orgs/splunk/teams/{team_name} -F parent_team_id={parent_team}"
+                ],
+                shell=True,
+            )
         return github_team
 
     def get_team(self, team_name: str) -> Team:
@@ -110,13 +120,17 @@ class TeamManager:
         """
         Adds repository to GitHub team with given permission
         """
-        click.echo(f"Adding repository {repo} with permission {permission} to {team.name}")
+        click.echo(
+            f"Adding repository {repo} with permission {permission} to {team.name}"
+        )
         github_repo = self.org.get_repo(repo)
         if not team.has_in_repos(github_repo):
             team.add_to_repos(github_repo)
         repo_name_for_update = f"{GITHUB_ORG}/{repo}"
         if not team.update_team_repository(repo_name_for_update, permission):
-            raise ValueError(f"Changing permission to {permission} for repository {repo} was not successful")
+            raise ValueError(
+                f"Changing permission to {permission} for repository {repo} was not successful"
+            )
 
 
 def get_repos_from_csvs(csvs: List[str]) -> List[str]:
@@ -134,22 +148,25 @@ def get_repo_names_from_csv_file(path: str) -> List[str]:
     parses csv with repositories definition and returns list with repo names
     """
     teams = []
-    with open(path, newline='') as csvfile:
-        reader = csv.DictReader(csvfile, fieldnames=["repo_name", "ta_name", "visibility", "description", "branch"])
+    with open(path, newline="") as csvfile:
+        reader = csv.DictReader(
+            csvfile,
+            fieldnames=["repo_name", "ta_name", "visibility", "description", "branch"],
+        )
         for row in reader:
-            teams.append(row['repo_name'])
+            teams.append(row["repo_name"])
     return teams
 
 
 @click.command()
-@click.argument('token', nargs=1, type=click.STRING)
-@click.argument('team_file', nargs=1, type=click.STRING)
-@click.argument('repo_csvs', nargs=-1, type=click.Path())
+@click.argument("token", nargs=1, type=click.STRING)
+@click.argument("team_file", nargs=1, type=click.STRING)
+@click.argument("repo_csvs", nargs=-1, type=click.Path())
 def create_teams(token, team_file, repo_csvs):
     tm = TeamManager(token=token, team_file=team_file, csvs=repo_csvs)
     tm.create_main_teams()
     tm.create_per_repo_teams()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     create_teams()

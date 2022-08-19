@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# echo all the commands 
+# echo all the commands
 set -x
 REPOORG=splunk
-BRANCH_NAME=ci/common-template-rollout-github-actions
+BRANCH_NAME=ci/pre-commit-linter-rollout
 
 command -v gh >/dev/null 2>&1 || { echo >&2 "I require gh but it's not installed.  Aborting."; exit 1; }
 command -v git >/dev/null 2>&1 || { echo >&2 "I require git but it's not installed.  Aborting."; exit 1; }
@@ -20,7 +20,7 @@ then
     echo Repository is new
     mkdir -p work/$REPO || true
     pushd work/$REPO || exit 1
-    
+
     rsync -avh --include ".*" ../../seed/ .
     rsync -avh --include ".*" ../../enforce/ .
 
@@ -42,7 +42,7 @@ then
     poetry init -n --author "Splunk Inc, <sales@splunk.com>" --python "^3.7" -l "Splunk-1-2020"
     reuse add pyproject.toml
     poetry add --lock --dev splunk-add-on-ucc-framework lovely-pytest-docker reuse pytest splunk-packaging-toolkit pytest-xdist pytest-splunk-addon pytest-expect pytest-splunk-addon-ui-smartx pytest-rerunfailures coverage pytest-cov
-    
+
     git init
     git config user.email ${GH_USER_EMAIL}
     git config user.name ${GH_USER_ADMIN}
@@ -69,7 +69,7 @@ else
     echo Repository is existing
 
     gh api repos/$REPOORG/$REPO --raw-field 'visibility=${REPOVISIBILITY}' -X PATCH || true
-    
+
     echo "adding permission for teams"
     gh api orgs/$REPOORG/teams/products-gdi-addons-adminrepo/repos/$REPOORG/$REPO --raw-field 'permission=admin' -X PUT
 
@@ -123,14 +123,14 @@ else
         git rm -f deps/apps/splunk_env_indexer
         git add deps/apps/splunk_env_indexer
         git commit -m "Deprecate splunk_env_indexer submodule"
-    fi       
+    fi
     if [ -d "deps/build/addonfactory_test_matrix_splunk" ]; then
         git submodule deinit -f deps/build/addonfactory_test_matrix_splunk
         rm -rf .git/modules/deps/build/addonfactory_test_matrix_splunk
         git rm -f deps/build/addonfactory_test_matrix_splunk
         git add deps/build/addonfactory_test_matrix_splunk
         git commit -m "Deprecate deps/build/addonfactory_test_matrix_splunk submodule"
-    fi       
+    fi
 
     if [[ -f "requirements.txt" ]]; then
         mkdir -p package/lib || true
@@ -139,13 +139,13 @@ else
     if [[ -f "requirements_py2.txt" ]]; then
         mkdir -p package/lib/py2 || true
         git mv requirements.txt package/lib/py2/
-    fi        
+    fi
     if [[ -f "requirements_py3.txt" ]]; then
         mkdir -p package/lib/py3 || true
         git mv requirements.txt package/lib/py3/
     fi
 
-    git rm splunk_add_on_ucc_framework-* || true        
+    git rm splunk_add_on_ucc_framework-* || true
 
     if [ -d "deps/build/disable_popup" ]; then
         git rm -f deps/build/disable_popup
@@ -161,56 +161,18 @@ else
         rsync -avh --include ".*" ../../conditional/ .
     fi
 
-    files_to_delete=(
-        "tests/data/wordlist.txt"
-        "splver.py"
-        "packagingScript.sh"
-        "build.sh"
-        "tests/knowledge/requirements.txt"
-        "tests/knowledge/wordlist.txt"
-        "tests/ui/requirements.txt"
-        "tests/pytest.ini"
-        "tests/test_addon.py"
-        "tests/__init__.py"
-        "tests/pytest-ci.ini"
-        "tests/conftest.py"
-        "tests/requirements.txt"
-        "requirements.txt"
-        ".python-version"
-        ".github/workflows/cla.yaml"
-        "tests/backend_entrypoint.sh"
-        ".github/workflows/reuse.yml"
-        ".github/workflows/snyk.yaml"
-        ".github/workflows/rebase.yml"
-        ".releaserc.yaml"
-        "NOTICE"
-        "package/lib/py2/requirements.txt"
-        "requirements_py2_dev.txt"
-        "LICENSES/LicenseRef-Splunk-1-2020.txt"
-        "semtag"
-        "unit_test_requirements.txt"
-        ".github/workflows/release-notes.yml"
-        ".github/workflows/requirements_unit_test.yml"
-    )
-
-    for i in ${!files_to_delete[@]}; do
-        if [[ -f "${files_to_delete[$i]}" ]]; then
-            git rm "${files_to_delete[$i]}" || true
-        fi
-    done
-
-    if [[ ! -f "pyproject.toml" ]]; 
-    then 
+    if [[ ! -f "pyproject.toml" ]];
+    then
         poetry init -n --author "Splunk Inc, <sales@splunk.com>" --python "^3.7" -l "Splunk-1-2020"
         reuse add pyproject.toml
         if [[ -f "package/lib/requirements.txt" ]]; then
             cat package/lib/requirements.txt | grep -v '^#' | grep -v '^\s*$' | grep -v '^six' | grep -v 'future' | xargs poetry add
-            cat package/lib/requirements.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs poetry add --lock  
+            cat package/lib/requirements.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs poetry add --lock
             git rm package/lib/requirements.txt || true
         fi
         if [[ -f "package/lib/py3/requirements.txt" ]]; then
             cat package/lib/py3/requirements.txt | grep -v '^#' | grep -v '^\s*$' | grep -v '^six' | grep -v 'future' | xargs poetry add
-            cat package/lib/py3/requirements.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs poetry add --lock  
+            cat package/lib/py3/requirements.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs poetry add --lock
             git rm package/lib/py3/requirements.txt || true
         fi
         if [[ -f "requirements_addon_specific.txt" ]]; then
@@ -220,7 +182,7 @@ else
                 | grep -v ${current}))
             for i in "${new[@]}"
             do
-            : 
+            :
                 poetry add --lock $i --dev || echo \# $i>>requirements_broken.txt
             done
         fi
@@ -232,7 +194,7 @@ else
                 | grep -v "^\(${current}\)\(==\| *$\)"))
             for i in "${new[@]}"
             do
-            : 
+            :
                 poetry add --lock $i --dev || echo \# $i>>requirements_broken.txt
             done
             cat requirements_dev.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs -I{} poetry add --lock {}==* --dev
@@ -241,7 +203,7 @@ else
         current=$(poetry show -t | grep '^[a-z]' | sed 's| .*||g' | paste -s -d\| - | sed 's/\|/\\\|/g')
         poetry add --lock splunk-packaging-toolkit --dev  || true
         poetry add --lock pytest-splunk-addon --dev  || true
-        
+
         if [[ -d tests/ui ]]; then
             poetry add --lock -D pytest-splunk-addon-ui-smartx pytest-splunk-addon splunk-add-on-ucc-framework || true
         else
@@ -251,14 +213,14 @@ else
         if [[ -d tests/unit ]]; then
             poetry add --lock pytest-cov --dev  || true
             poetry add --lock coverage --dev  || true
-        else 
+        else
             poetry remove coverage  --dev || true
             poetry remove pytest-cov  --dev || true
         fi
         poetry remove configparser || true
 
         if [[ -f "requirements_addon_specific.txt" ]]; then
-            cat requirements_addon_specific.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs poetry add --lock --dev 
+            cat requirements_addon_specific.txt | grep -v '^#' | grep -v '^\s*$' | grep '^six\|^future' | cut -d= -f1 | xargs poetry add --lock --dev
             git rm requirements_addon_specific.txt || true
         fi
     fi
@@ -273,17 +235,21 @@ else
         git rm -rf .circleci
     fi
 
+    if [[ -d .vscode ]]; then
+        git rm -rf .vscode
+    fi
+
     if [[ ! -f ".app-vetting.yaml" ]]; then
         touch .app-vetting.yaml
     fi
-    
+
     if [ -f "tests/requirement_test/pytest-ci.ini" ]; then
         echo "tests/requirement_test/pytest-ci.ini found"
         sed -i "s/\/home\/circleci\/work\///g" tests/requirement_test/pytest-ci.ini
         sed -i "s/-n[[:space:]]*5/-n 1/g" tests/requirement_test/pytest-ci.ini
         sed -i '/^[[:space:]]*--splunk-data-generator=tests\/knowledge\/*[[:space:]]*$/d' tests/requirement_test/pytest-ci.ini
     fi
-    
+
     if [ ! -d "tests/knowledge/samples" ]; then
         echo "No samples directory, changing pytest-xdist n parameter to 1"
         sed -i "s/-n[[:space:]]*5/-n 1/g" tests/knowledge/pytest-ci.ini
@@ -297,6 +263,13 @@ else
     gh api /repos/$REPOORG/$REPO  -H 'Accept: application/vnd.github.nebula-preview+json' -X PATCH -F visibility=$REPOVISIBILITY
     git add . || exit 1
     git commit -am "ci: common template rollout changes" || exit 1
+
+    pip install pre-commit
+    pre-commit run --all-files
+    git status
+    git add . || exit 1
+    git commit -am "style: pre-commit run --all-files"
+
     git push -f --set-upstream origin "$BRANCH_NAME" || exit 1
     sleep 10s
     gh pr create \

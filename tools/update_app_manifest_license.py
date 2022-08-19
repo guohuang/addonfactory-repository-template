@@ -25,8 +25,12 @@ class AppManifest:
                 raise
 
     def update_addon_license(self) -> None:
-        if self._manifest["info"]["license"]["text"].startswith("LICENSES/LicenseRef-Splunk"):
-            self._manifest["info"]["license"]["text"] = "LICENSES/LicenseRef-Splunk-8-2021.txt"
+        if self._manifest["info"]["license"]["text"].startswith(
+            "LICENSES/LicenseRef-Splunk"
+        ):
+            self._manifest["info"]["license"][
+                "text"
+            ] = "LICENSES/LicenseRef-Splunk-8-2021.txt"
 
     def __str__(self) -> str:
         content = json.dumps(self._manifest, indent=4)

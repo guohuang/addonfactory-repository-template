@@ -20,7 +20,7 @@ slim package output/<add-on name>
 
 ## Test
 
-Using docker 
+Using docker
 
 ```bash
 pytest
