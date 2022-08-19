@@ -2,7 +2,7 @@
 # echo all the commands
 set -x
 REPOORG=splunk
-BRANCH_NAME=ci/pre-commit-linter-rollout
+BRANCH_NAME=ci/common-template-rollout-github-actions
 
 command -v gh >/dev/null 2>&1 || { echo >&2 "I require gh but it's not installed.  Aborting."; exit 1; }
 command -v git >/dev/null 2>&1 || { echo >&2 "I require git but it's not installed.  Aborting."; exit 1; }
