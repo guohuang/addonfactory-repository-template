@@ -247,6 +247,10 @@ else
         git rm ".ort.yml" || true
     fi
 
+    if [[ -f "LICENSES/.DS_Store" ]]; then
+        git rm "LICENSES/.DS_Store" || true
+    fi
+
     if [ -f "tests/requirement_test/pytest-ci.ini" ]; then
         echo "tests/requirement_test/pytest-ci.ini found"
         sed -i "s/\/home\/circleci\/work\///g" tests/requirement_test/pytest-ci.ini
