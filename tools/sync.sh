@@ -243,6 +243,10 @@ else
         touch .app-vetting.yaml
     fi
 
+    if [[ -f ".ort.yml" ]]; then
+        git rm ".ort.yml" || true
+    fi
+
     if [ -f "tests/requirement_test/pytest-ci.ini" ]; then
         echo "tests/requirement_test/pytest-ci.ini found"
         sed -i "s/\/home\/circleci\/work\///g" tests/requirement_test/pytest-ci.ini
@@ -273,6 +277,6 @@ else
     git push -f --set-upstream origin "$BRANCH_NAME" || exit 1
     sleep 10s
     gh pr create \
-        --title "ci: Bump repository configuration from template${PR_SUFFIX}" --fill --head "$BRANCH_NAME" || exit 1
+        --title "ci: bump repository configuration from template${PR_SUFFIX}" --fill --head "$BRANCH_NAME" || exit 1
 fi
 popd
