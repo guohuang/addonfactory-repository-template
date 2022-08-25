@@ -48,7 +48,6 @@ splunk-add-on-for-crowdstrike-fdr,Splunk_TA_CrowdStrike-FDR,internal,"Splunk Add
 splunk-add-on-for-google-workspace,Splunk_TA_Google_Workspace,internal,"Google Workspace Add-on for Splunk",main
 splunk-add-on-for-microsoft-sysmon,Splunk_TA_microsoft-sysmon,internal,"Splunk Add-on for Microsoft Sysmon",main
 splunk-add-on-for-fortinet-fortigate,Splunk_TA_fortinet_fortigate,internal,"Fortinet Fortigate Add-on for Splunk",main
-splunk-add-on-for-proofpoint-email,TA_pps,internal,"Proofpoint Email Security Add-On for Splunk",main
 splunk-add-on-for-cisco-cloudlock,cisco-cloud-security,internal,"Cisco Cloud Security",main
 google-chrome-add-on-for-splunk,TA_google_chrome,internal,"Google Chrome Add-on for Splunk",main
 splunk-dbx-add-on-for-microsoft-sql-server,Splunk_JDBC_mssql,internal,"Splunk DBX Add-on for Microsoft SQL Server JDBC",main
