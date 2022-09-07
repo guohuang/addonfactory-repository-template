@@ -247,6 +247,26 @@ else
         git rm ".ort.yml" || true
     fi
 
+    if [[ -f ".jscpd.json" ]]; then
+        git rm ".jscpd.json" || true
+    fi
+
+    if [[ -f ".flake8" ]]; then
+        git rm ".flake8" || true
+    fi
+
+    if [[ -f ".markdownlintignore" ]]; then
+        git rm ".markdownlintignore" || true
+    fi
+
+    if [[ -f ".mypy.ini" ]]; then
+        git rm ".mypy.ini" || true
+    fi
+
+    if [[ -f ".textlintignore" ]]; then
+        git rm ".textlintignore" || true
+    fi
+
     if [[ -f "LICENSES/.DS_Store" ]]; then
         git rm "LICENSES/.DS_Store" || true
     fi
