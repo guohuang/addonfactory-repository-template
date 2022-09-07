@@ -84,3 +84,4 @@ splunk-add-on-for-jira-data-center,Splunk_TA_jira-data-center,internal,"Splunk A
 splunk-stream-add-on-for-netscaler,Splunk_SFA_netscaler,internal,"Splunk Stream Flow Add-on for Citrix Netscaler",main
 splunk-dbx-add-on-for-db2,Splunk_JDBC_db2,internal,"Splunk DBX Add-on for DB2 JDBC",main
 splunk-add-on-for-sysmon-for-linux,Splunk_TA_sysmon-for-linux,internal,"Splunk Add-on for Sysmon For Linux",main
+splunk-add-on-for-sftp-files-downloader,TA-sftp-files-downloader,public,"Splunk Add-on for SFTP files downloader",main
